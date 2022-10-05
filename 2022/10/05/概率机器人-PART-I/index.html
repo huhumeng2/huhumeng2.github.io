@@ -5,16 +5,19 @@
   
 
   
-  <title>Archives: 2022 | Huhumeng&#39;s Blog</title>
+  <title>概率机器人 PART I | Huhumeng&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="personal blog for huhumeng">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Huhumeng&#39;s Blog">
-<meta property="og:url" content="https://huhumeng2.github.io/archives/2022/index.html">
+  <meta name="description" content="第二章 递归状态估计2.2 概率的基本概念一维高斯分布  p(x) &#x3D; \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="概率机器人 PART I">
+<meta property="og:url" content="https://huhumeng2.github.io/2022/10/05/%E6%A6%82%E7%8E%87%E6%9C%BA%E5%99%A8%E4%BA%BA-PART-I/index.html">
 <meta property="og:site_name" content="Huhumeng&#39;s Blog">
-<meta property="og:description" content="personal blog for huhumeng">
+<meta property="og:description" content="第二章 递归状态估计2.2 概率的基本概念一维高斯分布  p(x) &#x3D; \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}}">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-10-05T14:57:59.000Z">
+<meta property="article:modified_time" content="2022-10-05T15:06:52.336Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="SLAM">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Huhumeng&#39;s Blog" type="application/atom+xml">
@@ -64,78 +67,55 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/10/05/%E6%A6%82%E7%8E%87%E6%9C%BA%E5%99%A8%E4%BA%BA-PART-I/" class="archive-article-date">
-  <time datetime="2022-10-05T14:57:59.000Z" itemprop="datePublished">Oct 5</time>
+        <section id="main"><article id="post-概率机器人-PART-I" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/10/05/%E6%A6%82%E7%8E%87%E6%9C%BA%E5%99%A8%E4%BA%BA-PART-I/" class="article-date">
+  <time datetime="2022-10-05T14:57:59.000Z" itemprop="datePublished">2022-10-05</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/10/05/%E6%A6%82%E7%8E%87%E6%9C%BA%E5%99%A8%E4%BA%BA-PART-I/">概率机器人 PART I</a>
+    <h1 class="article-title" itemprop="name">
+      概率机器人 PART I
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/10/05/Test/" class="archive-article-date">
-  <time datetime="2022-10-05T14:04:14.000Z" itemprop="datePublished">Oct 5</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/10/05/Test/">Test</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/10/05/hello-world/" class="archive-article-date">
-  <time datetime="2022-10-05T14:01:55.307Z" itemprop="datePublished">Oct 5</time>
-</a>
+        <h1 id="第二章-递归状态估计"><a href="#第二章-递归状态估计" class="headerlink" title="第二章 递归状态估计"></a>第二章 递归状态估计</h1><h2 id="2-2-概率的基本概念"><a href="#2-2-概率的基本概念" class="headerlink" title="2.2 概率的基本概念"></a>2.2 概率的基本概念</h2><p>一维高斯分布</p>
+<script type="math/tex; mode=display">
+p(x) = \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}}</script>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/10/05/hello-world/">Hello World</a>
-    </h1>
-  
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://huhumeng2.github.io/2022/10/05/%E6%A6%82%E7%8E%87%E6%9C%BA%E5%99%A8%E4%BA%BA-PART-I/" data-id="cl8vrsuue00027ovqadvqb3gz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SLAM/" rel="tag">SLAM</a></li></ul>
 
-    </header>
+    </footer>
   </div>
-</article>
+  
+    
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2022/10/05/Test/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Test</div>
+    </a>
   
+</nav>
 
+  
+</article>
 
 </section>
         
