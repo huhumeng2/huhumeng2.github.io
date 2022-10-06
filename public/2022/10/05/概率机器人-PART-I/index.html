@@ -7,15 +7,15 @@
   
   <title>概率机器人 PART I | Huhumeng&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="第二章 递归状态估计2.2 概率的基本概念一维高斯分布  p(x) &#x3D; \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}}">
+  <meta name="description" content="第二章 递归状态估计2.2 概率的基本概念高斯分布  \begin{aligned}     p(x) &amp;&#x3D; \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}} \\     p(\mathbf{x}) &amp;&#x3D; \frac{1}{\det {\sqrt{2 \pi \boldsymbol{\Sigma}}}}e^{-\fr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="概率机器人 PART I">
 <meta property="og:url" content="https://huhumeng2.github.io/2022/10/05/%E6%A6%82%E7%8E%87%E6%9C%BA%E5%99%A8%E4%BA%BA-PART-I/index.html">
 <meta property="og:site_name" content="Huhumeng&#39;s Blog">
-<meta property="og:description" content="第二章 递归状态估计2.2 概率的基本概念一维高斯分布  p(x) &#x3D; \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}}">
+<meta property="og:description" content="第二章 递归状态估计2.2 概率的基本概念高斯分布  \begin{aligned}     p(x) &amp;&#x3D; \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}} \\     p(\mathbf{x}) &amp;&#x3D; \frac{1}{\det {\sqrt{2 \pi \boldsymbol{\Sigma}}}}e^{-\fr">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-10-05T14:57:59.000Z">
-<meta property="article:modified_time" content="2022-10-05T15:06:52.336Z">
+<meta property="article:modified_time" content="2022-10-06T07:29:29.012Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="SLAM">
 <meta name="twitter:card" content="summary">
@@ -89,9 +89,220 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="第二章-递归状态估计"><a href="#第二章-递归状态估计" class="headerlink" title="第二章 递归状态估计"></a>第二章 递归状态估计</h1><h2 id="2-2-概率的基本概念"><a href="#2-2-概率的基本概念" class="headerlink" title="2.2 概率的基本概念"></a>2.2 概率的基本概念</h2><p>一维高斯分布</p>
+        <h2 id="第二章-递归状态估计"><a href="#第二章-递归状态估计" class="headerlink" title="第二章 递归状态估计"></a>第二章 递归状态估计</h2><h3 id="2-2-概率的基本概念"><a href="#2-2-概率的基本概念" class="headerlink" title="2.2 概率的基本概念"></a>2.2 概率的基本概念</h3><p><strong>高斯分布</strong></p>
 <script type="math/tex; mode=display">
-p(x) = \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}}</script>
+\begin{aligned}
+    p(x) &= \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x - \mu)^2}{2\sigma^2}} \\
+    p(\mathbf{x}) &= \frac{1}{\det {\sqrt{2 \pi \boldsymbol{\Sigma}}}}e^{-\frac{1}{2}{(\mathbf{x} - \boldsymbol{\mu})^T}\boldsymbol{\Sigma}^{-1}(\mathbf{x} - \boldsymbol{\mu})} 
+\end{aligned}</script><p><strong>条件独立与绝对独立之间既不充分也不必要</strong></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+    & p(x, y | z ) = p(x | z) p(y | z) \nRightarrow p(x, y) = p(x) p(y) \\
+    & p(x, y) = p(x) p(y)  \nRightarrow p(x, y | z ) = p(x | z) p(y | z) 
+\end{aligned}</script><p><strong>期望与协方差</strong></p>
+<script type="math/tex; mode=display">
+E[X] = \int xp(x)dx \\
+E[aX + b] = a E[X] + b \\
+D[X] = E[(X - E[X])^2] = E[X^2] - E^2[X]</script><p><strong>熵</strong></p>
+<script type="math/tex; mode=display">
+H(x) = -E[\log_2p(x)]</script><h3 id="2-3-机器人环境交互"><a href="#2-3-机器人环境交互" class="headerlink" title="2.3 机器人环境交互"></a>2.3 机器人环境交互</h3><h4 id="2-3-1-状态"><a href="#2-3-1-状态" class="headerlink" title="2.3.1 状态"></a>2.3.1 状态</h4><p>机器人系统中典型状态:</p>
+<ul>
+<li>机器人位姿</li>
+<li>机器人运动学状态，一般指关节的转动角度</li>
+<li>机器人速度、角速度</li>
+<li>环境中物体的位置和特征</li>
+<li>移动的物体和人的位置和状态</li>
+<li>潜在的其他状态量，如传感器是否故障</li>
+</ul>
+<h4 id="2-3-2-环境交互"><a href="#2-3-2-环境交互" class="headerlink" title="2.3.2 环境交互"></a>2.3.2 环境交互</h4><p>两种交互类型: 机器人通过执行机构影响环境的状态与它通过传感器收集有关状态的信息</p>
+<h4 id="2-3-3-概率生成法则"><a href="#2-3-3-概率生成法则" class="headerlink" title="2.3.3 概率生成法则"></a>2.3.3 概率生成法则</h4><p>马尔可夫性，可以称为隐马尔可夫模型(HMM)或者动态贝叶斯网络(DBN)</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+    p(x_t | x_{0:t-1}, z_{1:t-1}, u_{1:t}) &= p(x_t | x_{t - 1}, u_t) \\
+    p(z_t | x_{0:t-1}, z_{1:t-1}, u_{1:t}) & = p(z_t | x_t)
+\end{aligned}</script><h4 id="2-3-4-置信分布"><a href="#2-3-4-置信分布" class="headerlink" title="2.3.4 置信分布"></a>2.3.4 置信分布</h4><p>置信分布可以理解为状态量的后验分布，有两种后验分布</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\overline{\mathrm{bel}}(x_t) &= p(x_t | z_{1:t-1}, u_{1:t}) \\
+\mathrm{bel}(x_t) &= p(x_t | z_{1:t}, u_{1:t})
+\end{aligned}</script><p>第一种后验计算过程被称为预测，而第二种后验被称为修正或者测量更新，这两个概率为卡尔曼滤波的核心</p>
+<h3 id="2-4-贝叶斯滤波"><a href="#2-4-贝叶斯滤波" class="headerlink" title="2.4 贝叶斯滤波"></a>2.4 贝叶斯滤波</h3><h4 id="2-4-1-贝叶斯滤波算法"><a href="#2-4-1-贝叶斯滤波算法" class="headerlink" title="2.4.1 贝叶斯滤波算法"></a>2.4.1 贝叶斯滤波算法</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Algo Bayes_filter(bel(x(t-1)), u(t), z(t)):</span><br><span class="line">    for all x(t) do:</span><br><span class="line">        bel_overline(x(t)) = integrate(p(x(t) | u(t), x(t - 1)) bel(x(t - 1)) dx(t-1))</span><br><span class="line">        bel_(x(t)) = eta p((z(t) | x(t)))  bel_overline(x(t))</span><br><span class="line">    endfor</span><br><span class="line">    return bel_(x(t))</span><br></pre></td></tr></table></figure>
+<h4 id="2-4-2-实例"><a href="#2-4-2-实例" class="headerlink" title="2.4.2 实例"></a>2.4.2 实例</h4><p>假设有一个估计门开关的传感器，初始的门开关与否的先验相同，即</p>
+<script type="math/tex; mode=display">
+p(X_0 = \mathrm{open}) = 0.5 \\
+p(X_0 = \mathrm{close}) = 0.5</script><p>且有测量模型</p>
+<script type="math/tex; mode=display">
+p(Z_t = \mathrm{sense\_open} | X_t = \mathrm{open}) = 0.6 \\ 
+p(Z_t = \mathrm{sense\_close} | X_t = \mathrm{open}) = 0.4 \\
+p(Z_t = \mathrm{sense\_open} | X_t = \mathrm{close}) = 0.2 \\
+p(Z_t = \mathrm{sense\_close} | X_t = \mathrm{close}) = 0.8</script><p>机器人有推门或者啥也不干的操作，有如下的状态转移概率</p>
+<script type="math/tex; mode=display">
+p(X_t = \mathrm{open} | U_t = \mathrm{push}, X_{t-1} = \mathrm{open})  = 1 \\
+p(X_t = \mathrm{close} | U_t = \mathrm{push}, X_{t-1} = \mathrm{open})  = 0 \\
+p(X_t = \mathrm{open} | U_t = \mathrm{push}, X_{t-1} = \mathrm{close})  = 0.8 \\
+p(X_t = \mathrm{close} | U_t = \mathrm{push}, X_{t-1} = \mathrm{close})  = 0.2 \\
+p(X_t = \mathrm{open} | U_t = \mathrm{do \ nothing}, X_{t-1} = \mathrm{open})  = 1 \\
+p(X_t = \mathrm{close} | U_t = \mathrm{do \ nothing}, X_{t-1} = \mathrm{open})  = 0 \\
+p(X_t = \mathrm{open} | U_t = \mathrm{do \ nothing}, X_{t-1} = \mathrm{close})  = 0 \\
+p(X_t = \mathrm{close} | U_t = \mathrm{do \ nothing}, X_{t-1} = \mathrm{close})  = 1</script><p>假设在$t_1$时刻，机器人没有采用任何控制动作，但传感器检测到门时开的，此时有贝叶斯滤波计算结果如下</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\overline{\mathrm{bel}}(x_1) = &p(x_1 | U_1 = \mathrm{do \ nothing}, X_0 = \mathrm{open}) \mathrm{bel}(x_0 = \mathrm{open}) + \\ 
+&p(x_1 | U_1 = \mathrm{do \ nothing}, X_0 = \mathrm{close}) \mathrm{bel}(x_0 = \mathrm{close})
+\end{aligned}</script><p>那么有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\overline{\mathrm{bel}}(X_1 = \mathrm{open}) &= 1 \times 0.5 + 0 \times 0.5 = 0.5 \\
+\overline{\mathrm{bel}}(X_1 = \mathrm{close}) & = 0 \times 0.5 + 1 \times 0.5 = 0.5
+\end{aligned}</script><p>接着计算更新后的后验概率</p>
+<script type="math/tex; mode=display">
+\mathrm{bel}(x_1) = \eta p(Z_1 = \mathrm{open} | x_1) \overline{\mathrm{bel}}(x_1)</script><p>那么有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathrm{bel}(X_1 = \mathrm{open}) &= \eta 0.6 \times 0.5 = 0.3 \eta \\
+\mathrm{bel}(X_1 = \mathrm{open}) &= \eta 0.2 \times 0.5 = 0.1 \eta
+\end{aligned}</script><p>归一化因子$\eta = (0.3 + 0.1)^-1 = 2.5$，所以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathrm{bel}(X_1 = \mathrm{open}) &= 0.75 \\
+\mathrm{bel}(X_1 = \mathrm{open}) &= 0.25
+\end{aligned}</script><p>对于$u_2 = \mathrm{push}$并且$Z_2 = \mathrm{open}$的情况下，此时可以计算得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\overline{\mathrm{bel}}(X_2 = \mathrm{open}) &= 1 \times 0.75 + 0.8 \times 0.25 = 0.95 \\
+\overline{\mathrm{bel}}(X_2 = \mathrm{close}) & = 0 \times 0.75 + 0.2 \times 0.25 = 0.05 \\
+\mathrm{bel}(X_2 = \mathrm{open}) &= \eta 0.6 \times 0.95 \approx 0.983 \\
+\mathrm{bel}(X_2 = \mathrm{open}) &= \eta 0.4 \times 0.05 \approx 0.017
+\end{aligned}</script><h4 id="2-4-3-贝叶斯滤波的数学推导"><a href="#2-4-3-贝叶斯滤波的数学推导" class="headerlink" title="2.4.3 贝叶斯滤波的数学推导"></a>2.4.3 贝叶斯滤波的数学推导</h4><p>首先根据贝叶斯法则后验概率有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(x_t | z_{1:t}, u_{1:t}) &= \frac{p(z_t| x_t,  z_{1:t-1},  u_{1:t}) p(x_t |  z_{1:t-1},  u_{1:t})}{p(z_t | z_{1:t-1},  u_{1:t})} \\
+& = \eta p(z_t| x_t,  z_{1:t-1},  u_{1:t}) p(x_t |  z_{1:t-1},  u_{1:t}) \\
+& = \eta p(z_t| x_t) p(x_t |  z_{1:t-1},  u_{1:t}) \\
+& = \eta p(z_t| x_t) \overline{\mathrm{bel}}(x_{t})
+\end{aligned}</script><p>接着计算$\overline{\mathrm{bel}}(x_{t})$:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\overline{\mathrm{bel}}(x_{t}) &=  p(x_t |  z_{1:t-1},  u_{1:t}) \\
+& = \int p(x_t | x_{t-1}, z_{1:t-1},  u_{1:t}) p(x_{t-1} | z_{1:t-1},  u_{1:t}) dx_{t-1} \\
+& = \int p(x_t | x_{t-1}, u_{t})  p(x_{t-1} | z_{1:t-1},  u_{1:t-1}) dx_{t-1} \\
+& = \int p(x_t | x_{t-1}, u_{t}) \mathrm{bel}(x_{t-1})
+\end{aligned}</script><h3 id="2-8-习题"><a href="#2-8-习题" class="headerlink" title="2.8 习题"></a>2.8 习题</h3><ol>
+<li><p>解:</p>
+<script type="math/tex; mode=display">
+p(x_1 = 0) = \frac{1}{34} \approx 0.0294 \\
+p(x_2 = 0) = \frac{1}{12} \approx 0.0833 \\
+\vdots\\
+p(x_N = 0) = \frac{1}{1 + 99 \frac{1}{3^N}}</script></li>
+<li><p> 解:<br> (a) $p = 0.2 <em> 0.4 </em> 0.2 = 0.016$<br> (b) Day 0: 随机出一个天气; Day 1: 按照状态转移表的概率进行随机转移<br> (c) …<br> (d) 设</p>
+<pre><code> $$
+ \begin&#123;aligned&#125;
+ Y_t &amp;= \begin&#123;bmatrix&#125;
+     P(X_t = 1) \\
+     p(X_t = 2) \\
+     p(X_t = 3)
+ \end&#123;bmatrix&#125; \\
+ A &amp;= \begin&#123;bmatrix&#125;
+ P(X_&#123;t+1&#125; = 1 | X_t = 1) &amp; P(X_&#123;t+1&#125; = 1 | X_t = 2) &amp; P(X_&#123;t+1&#125; = 1 | X_t = 3) \\
+ P(X_&#123;t+1&#125; = 2 | X_t = 1) &amp; P(X_&#123;t+1&#125; = 2 | X_t = 2) &amp; P(X_&#123;t+1&#125; = 2 | X_t = 3) \\
+ P(X_&#123;t+1&#125; = 3 | X_t = 1) &amp; P(X_&#123;t+1&#125; = 3 | X_t = 2) &amp; P(X_&#123;t+1&#125; = 3 | X_t = 3)
+  \end&#123;bmatrix&#125; \\
+  &amp; =  \begin&#123;bmatrix&#125;
+  0.8 &amp; 0.4 &amp; 0.2\\
+  0.2 &amp; 0.4 &amp; 0.6 \\
+  0.0 &amp; 0.2 &amp; 0.2
+    \end&#123;bmatrix&#125; 
+  \end&#123;aligned&#125;
+ $$
+ 有 $Y_&#123;t+1&#125; = A Y_t$，那么$Y_&#123;n&#125; = A^n Y_0$，将$A$进行相似分解为对角阵$A = P D P^&#123;-1&#125;$，其中$D$为
+ $$
+ D = \begin&#123;bmatrix&#125;
+ 1 &amp; 0 &amp; 0 \\
+ 0 &amp; \frac&#123;1 + \sqrt&#123;2&#125;&#125;&#123;5&#125; &amp; 0 \\
+ 0  &amp; 0&amp; \frac&#123;1 - \sqrt&#123;2&#125;&#125;&#123;5&#125;
+  \end&#123;bmatrix&#125; 
+ $$
+ 由于 $$
+ \lim_&#123;n \rightarrow \infty&#125; D^n = \begin&#123;bmatrix&#125;
+ 1 &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 \\
+ 0  &amp; 0&amp; 0
+  \end&#123;bmatrix&#125; 
+ $$
+ 所以最终
+ $$
+ \begin&#123;aligned&#125;
+  \lim_&#123;n \rightarrow \infty&#125; Y^n &amp;= P \begin&#123;bmatrix&#125;
+ 1 &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 \\
+ 0  &amp; 0&amp; 0
+  \end&#123;bmatrix&#125;  P^&#123;-1&#125; X_0 \\
+  &amp; = \begin&#123;bmatrix&#125;
+ \frac&#123;9&#125;&#123;14&#125;  \\
+ \frac&#123;2&#125;&#123;7&#125; \\
+ \frac&#123;1&#125;&#123;14&#125;  
+  \end&#123;bmatrix&#125;
+  \end&#123;aligned&#125;
+ $$
+</code></pre><p> (e) </p>
+<pre><code> $$
+ \begin&#123;aligned&#125;
+ H(x) = -(\frac&#123;9&#125;&#123;14&#125; \log_2\frac&#123;9&#125;&#123;14&#125; + \frac&#123;2&#125;&#123;7&#125; \log_2\frac&#123;2&#125;&#123;7&#125; + \frac&#123;1&#125;&#123;14&#125; \log_2\frac&#123;1&#125;&#123;14&#125;)
+ \end&#123;aligned&#125;
+ $$
+</code></pre><p> (f) 根据贝叶斯法则，用稳态时候的概率，可以计算出概率为</p>
+<pre><code> $$
+  \begin&#123;aligned&#125;
+ p(Y_&#123;t-1&#125; | Y_t) &amp;= \frac&#123;p(Y_t | Y_&#123;t-1&#125;) p(Y_&#123;t-1&#125;)&#125;&#123;p(Y_t)&#125; \\
+  &amp;=A \cdot \begin&#123;bmatrix&#125;
+     1 &amp; 2.25 &amp; 9 \\
+     0.444 &amp; 1 &amp; 4 \\
+     0.111 &amp; 0.25 &amp; 1
+  \end&#123;bmatrix&#125; \\
+  &amp; = 
+  \begin&#123;bmatrix&#125;
+  0.8 &amp; 0.45 &amp; 0 \\
+  0.18 &amp; 0.40 &amp; 0.80 \\
+  0.02 &amp; 0.15 &amp; 0.20
+   \end&#123;bmatrix&#125; 
+   \end&#123;aligned&#125;
+ $$
+</code></pre><p> (g) 状态转移矩阵依赖季节的话会丧失马尔可夫性，需要将季节变量引入到状态变量中恢复马尔可夫性</p>
+</li>
+<li><p>解:<br>(a)</p>
+<p> |     | $z_t$ | $\overline{\mathrm{bel}}(x_t)$                 | ${\mathrm{bel}}(x_t)$                       | $\eta$ |<br> | —- | ——- | ——————————————————————— | —————————————————————- | ——— |<br> | 1   |       |                                                | $\begin{bmatrix}1&amp;0&amp;0\end{bmatrix}^T$       | 1      |<br> | 2   | 多云  | $\begin{bmatrix}0.8&amp;0.2&amp;0\end{bmatrix}^T$      | $\begin{bmatrix}0.32&amp;0.14&amp;0\end{bmatrix}^T$ | 2.17   |<br> | 3   | 多云  | $\begin{bmatrix}0.67&amp;0.26&amp;0.06\end{bmatrix}^T$ | $\begin{bmatrix}0.26&amp;0.18&amp;0\end{bmatrix}^T$ | 2.27   |<br> 用同样的方法向后计算，第五天时晴天的后验概率为0.4<br>(b) 如果只依据以往的数据，计算后验概率，2-4最有可能的天气为晴、晴、雨，概率分别为0.89、0.87、1。利用所有数据计算后验概率，2-4最有可能的天气为晴、多云、雨，概率分别为0.8, 1.0, 1.0</p>
+</li>
+<li><p>解:<br>(a): $p(x)$ 为一个高斯分布，测量$p(z|x)$也为一个高斯分布<br>(b): 后验也为一个高斯分布</p>
+</li>
+</ol>
+<h2 id="第三章-高斯滤波"><a href="#第三章-高斯滤波" class="headerlink" title="第三章 高斯滤波"></a>第三章 高斯滤波</h2><h3 id="3-2-卡尔曼滤波"><a href="#3-2-卡尔曼滤波" class="headerlink" title="3.2 卡尔曼滤波"></a>3.2 卡尔曼滤波</h3><h4 id="3-2-1-线性高斯系统"><a href="#3-2-1-线性高斯系统" class="headerlink" title="3.2.1 线性高斯系统"></a>3.2.1 线性高斯系统</h4><p>状态转移概率以及测量概率均符合高斯分布</p>
+<h4 id="3-2-2-卡尔曼滤波算法"><a href="#3-2-2-卡尔曼滤波算法" class="headerlink" title="3.2.2 卡尔曼滤波算法"></a>3.2.2 卡尔曼滤波算法</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Algorithm Kalman_filter(mu(t-1), Sigma(t-1), u(t), z(t)):</span><br><span class="line">    overline_mu(t) = A(t) mu(t-1) + B(t) u(t)</span><br><span class="line">    overline_Sigma(t) = A(t)  Sigma(t-1) A(t).T + R(t)</span><br><span class="line"></span><br><span class="line">    K(t) = overline_sigma(t) C(t).T (C(t) overline_sigma(t) C(t).T + Q(t)).inverse()</span><br><span class="line">    mu(t) = overline_mu(t) + K(t) (z(t) - C(t) overline_mu(t))</span><br><span class="line">    Sigma(t) = (I -  K(t) C(t)) overline_Sigma(t)</span><br></pre></td></tr></table></figure>
+<h4 id="3-2-4-卡尔曼滤波的数学推导"><a href="#3-2-4-卡尔曼滤波的数学推导" class="headerlink" title="3.2.4 卡尔曼滤波的数学推导"></a>3.2.4 卡尔曼滤波的数学推导</h4><p>首先根据贝叶斯滤波的预测步骤可知</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+    \overline{\mathrm{bel}}(x_t) &= \int p(x_t | x_{t-1}, u_t) {\mathrm{bel}}(x_t-1) dx_{t-1} \\
+    &= \int N(A_t x_{t-1} + B_t u _t, R_t) N(\mu_{t-1}, \Sigma_{t-1}) dx_{t-1} \\
+    &= \eta \int \exp \left\{ -\frac{1}{2}(x_t - A_t  x_{t-1} - B_t u_t)^T R_t^{-1}(x_t - A_t  x_{t-1} - B_t u_t)\right\} \\
+    & \quad \exp \left\{-\frac{1}{2} (x_{t-1} - \mu_{t-1})^T \Sigma^{-1}_{t-1} (x_{t-1} - \mu_{t-1})\right\} dx_{t-1} \\
+    & = \eta \int \exp \left\{ -L_t\right\} dx_{t-1}
+\end{aligned}</script><p>其中</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L_t &= \frac{1}{2}(x_t - A_t  x_{t-1} - B_t u_t)^T R_t^{-1}(x_t - A_t  x_{t-1} - B_t u_t) + \\
+    & \quad \frac{1}{2} (x_{t-1} - \mu_{t-1})^T \Sigma^{-1}_{t-1} (x_{t-1} - \mu_{t-1})
+\end{aligned}</script><p>该式子可以分解为仅包含$x_t$的部分以及剩余部分，经过推导可以得知 $\overline{\mathrm{bel}}(x_t)$ 也为一个高斯分布，其均值为 $\overline{\mu}_t = A_t \mu_{t-1} + B_t u_t$，方差为 $\overline{\Sigma}_t = A_t \Sigma_{t-1}^{-1} A_t^T + R_t$</p>
+<p>更新步骤有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+{\mathrm{bel}}(x_t) &= \eta p(z_t | x_t) \overline{\mathrm{bel}}(x_t) \\
+& = N(C_tx_t, Q_t) N(\overline{\mu}_t, \overline{\Sigma}_t)
+\end{aligned}</script><p>该高斯的乘积也是一个高斯分布，且</p>
+<script type="math/tex; mode=display">
+\mu_t = \overline{\mu}_t + K_t(z_t - C_t \overline{\mu}_t) \\
+\Sigma_t = (I - K_t C_t) \overline{\Sigma}_t</script><h3 id="3-3-扩展卡尔曼滤波"><a href="#3-3-扩展卡尔曼滤波" class="headerlink" title="3.3 扩展卡尔曼滤波"></a>3.3 扩展卡尔曼滤波</h3><h4 id="3-3-3-扩展卡尔曼滤波算法"><a href="#3-3-3-扩展卡尔曼滤波算法" class="headerlink" title="3.3.3 扩展卡尔曼滤波算法"></a>3.3.3 扩展卡尔曼滤波算法</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Algorithm Extended_Kalman_filter(mu(t-1), Sigma(t-1), u(t), z(t)):</span><br><span class="line">    overline_mu(t) = g(u(t), mu(t-1))</span><br><span class="line">    overline_Sigma(t) = G(t)  Sigma(t-1) G(t).T + R(t)</span><br><span class="line"></span><br><span class="line">    K(t) = overline_sigma(t) H(t).T (H(t) overline_sigma(t) H(t).T + Q(t)).inverse()</span><br><span class="line">    mu(t) = overline_mu(t) + K(t) (z(t) - h(overline_mu(t)))</span><br><span class="line">    Sigma(t) = (I -  K(t) H(t)) overline_Sigma(t)</span><br></pre></td></tr></table></figure>
+<h3 id="3-4-无迹卡尔曼滤波"><a href="#3-4-无迹卡尔曼滤波" class="headerlink" title="3.4 无迹卡尔曼滤波"></a>3.4 无迹卡尔曼滤波</h3><p>UKF采用一些采样点来计算高斯分布，避免求导</p>
+<h3 id="3-5-信息滤波"><a href="#3-5-信息滤波" class="headerlink" title="3.5 信息滤波"></a>3.5 信息滤波</h3><p>使用正则参数表达高斯分布，与KF是对偶关系</p>
+
       
     </div>
     <footer class="article-footer">
